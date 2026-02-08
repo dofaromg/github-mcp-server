@@ -1,6 +1,7 @@
 package translations
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
@@ -136,21 +137,21 @@ func TestImportFromFileErrors(t *testing.T) {
 func TestConcurrentAccess(t *testing.T) {
 	store := NewTranslationStore()
 
-	// Test concurrent writes
+	// Test concurrent writes with different keys
 	var wg sync.WaitGroup
 	for i := 0; i < 100; i++ {
 		wg.Add(1)
-		go func() {
+		go func(idx int) {
 			defer wg.Done()
-			key := "concurrent_key"
-			store.ImportTranslationKey(key, "value")
+			key := fmt.Sprintf("concurrent_key_%d", idx)
+			store.ImportTranslationKey(key, fmt.Sprintf("value_%d", idx))
 			_, _ = store.ExportTranslationKey(key)
-		}()
+		}(i)
 	}
 	wg.Wait()
 
 	// Verify no data race occurred
-	assert.Equal(t, 1, store.Count())
+	assert.Equal(t, 100, store.Count())
 }
 
 func TestKeyNormalization(t *testing.T) {

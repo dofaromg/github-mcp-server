@@ -92,9 +92,16 @@ func (ts *TranslationStore) ImportFromFile(path string) error {
 // ExportToFile exports all translations to a JSON file at the specified path.
 // Returns an error if the file cannot be created or written.
 func (ts *TranslationStore) ExportToFile(path string) error {
+	// Make a defensive copy under the lock to reduce lock contention
 	ts.mu.RLock()
-	jsonData, err := json.MarshalIndent(ts.keys, "", "  ")
+	keysCopy := make(map[string]string, len(ts.keys))
+	for k, v := range ts.keys {
+		keysCopy[k] = v
+	}
 	ts.mu.RUnlock()
+
+	// Marshal without holding the lock
+	jsonData, err := json.MarshalIndent(keysCopy, "", "  ")
 	if err != nil {
 		return fmt.Errorf("error marshaling map to JSON: %w", err)
 	}
