@@ -50,10 +50,12 @@ func hasFilter(query, filterType string) bool {
 		}
 
 		// Look for next occurrence
-		idx = strings.Index(query[idx+1:], prefix)
-		if idx != -1 {
-			idx = idx + strings.Index(query, prefix) + 1
+		remaining := query[idx+1:]
+		nextIdx := strings.Index(remaining, prefix)
+		if nextIdx == -1 {
+			break
 		}
+		idx = idx + 1 + nextIdx
 	}
 
 	return false
