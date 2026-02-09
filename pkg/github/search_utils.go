@@ -49,13 +49,13 @@ func hasFilter(query, filterType string) bool {
 			}
 		}
 
-		// Look for next occurrence
-		remaining := query[idx+1:]
+		// Look for next occurrence - search after the current prefix
+		remaining := query[idx+len(prefix):]
 		nextIdx := strings.Index(remaining, prefix)
 		if nextIdx == -1 {
 			break
 		}
-		idx = idx + 1 + nextIdx
+		idx = idx + len(prefix) + nextIdx
 	}
 
 	return false
@@ -100,13 +100,13 @@ func hasSpecificFilter(query, filterType, filterValue string) bool {
 			}
 		}
 
-		// Look for next occurrence
-		remaining := query[idx+1:]
+		// Look for next occurrence - search after the current target
+		remaining := query[idx+len(target):]
 		nextIdx := strings.Index(remaining, target)
 		if nextIdx == -1 {
 			break
 		}
-		idx = idx + 1 + nextIdx
+		idx = idx + len(target) + nextIdx
 	}
 
 	return false
