@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
+	"strings"
+	"unicode"
 
 	ghErrors "github.com/github/github-mcp-server/pkg/errors"
 	"github.com/github/github-mcp-server/pkg/utils"
@@ -14,19 +15,99 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
+// hasFilter checks if a query string contains a filter of the specified type.
+// It matches filter at start of string, after whitespace, or after non-word characters like '('.
+// This implementation uses string operations instead of regex for better performance.
 func hasFilter(query, filterType string) bool {
-	// Match filter at start of string, after whitespace, or after non-word characters like '('
-	pattern := fmt.Sprintf(`(^|\s|\W)%s:\S+`, regexp.QuoteMeta(filterType))
-	matched, _ := regexp.MatchString(pattern, query)
-	return matched
+	// Build the filter prefix we're looking for (e.g., "is:", "repo:")
+	prefix := filterType + ":"
+
+	// Check if the filter appears anywhere in the query
+	idx := strings.Index(query, prefix)
+	if idx == -1 {
+		return false
+	}
+
+	// Keep checking all occurrences
+	for idx != -1 {
+		// Check if this is a valid filter position:
+		// - At start of string (idx == 0)
+		// - After whitespace or non-word character
+		if idx == 0 {
+			// At start - need to check if followed by non-whitespace
+			if idx+len(prefix) < len(query) && !unicode.IsSpace(rune(query[idx+len(prefix)])) {
+				return true
+			}
+		} else {
+			prevChar := rune(query[idx-1])
+			// Valid if preceded by whitespace or non-word character (like '(' or other punctuation)
+			if unicode.IsSpace(prevChar) || (!unicode.IsLetter(prevChar) && !unicode.IsDigit(prevChar) && prevChar != '_') {
+				// Also need to check if followed by non-whitespace (actual value)
+				if idx+len(prefix) < len(query) && !unicode.IsSpace(rune(query[idx+len(prefix)])) {
+					return true
+				}
+			}
+		}
+
+		// Look for next occurrence
+		idx = strings.Index(query[idx+1:], prefix)
+		if idx != -1 {
+			idx = idx + strings.Index(query, prefix) + 1
+		}
+	}
+
+	return false
 }
 
+// hasSpecificFilter checks if a query string contains a specific filter:value pair.
+// It matches at start, after whitespace, or after non-word characters, and ensures
+// the value ends with a word boundary, whitespace, or non-word character.
+// This implementation uses string operations instead of regex for better performance.
 func hasSpecificFilter(query, filterType, filterValue string) bool {
-	// Match specific filter:value at start, after whitespace, or after non-word characters
-	// End with word boundary, whitespace, or non-word characters like ')'
-	pattern := fmt.Sprintf(`(^|\s|\W)%s:%s($|\s|\W)`, regexp.QuoteMeta(filterType), regexp.QuoteMeta(filterValue))
-	matched, _ := regexp.MatchString(pattern, query)
-	return matched
+	// Build the exact filter:value we're looking for (e.g., "is:issue")
+	target := filterType + ":" + filterValue
+
+	// Check if the target appears anywhere in the query
+	idx := strings.Index(query, target)
+	if idx == -1 {
+		return false
+	}
+
+	// Keep checking all occurrences
+	for idx != -1 {
+		// Check if this is a valid position:
+		// - At start of string (idx == 0)
+		// - After whitespace or non-word character
+		validStart := false
+		if idx == 0 {
+			validStart = true
+		} else {
+			prevChar := rune(query[idx-1])
+			validStart = unicode.IsSpace(prevChar) || (!unicode.IsLetter(prevChar) && !unicode.IsDigit(prevChar) && prevChar != '_')
+		}
+
+		if validStart {
+			// Check if followed by end of string, whitespace, or non-word character
+			endIdx := idx + len(target)
+			if endIdx == len(query) {
+				return true
+			}
+			nextChar := rune(query[endIdx])
+			if unicode.IsSpace(nextChar) || (!unicode.IsLetter(nextChar) && !unicode.IsDigit(nextChar) && nextChar != '_') {
+				return true
+			}
+		}
+
+		// Look for next occurrence
+		remaining := query[idx+1:]
+		nextIdx := strings.Index(remaining, target)
+		if nextIdx == -1 {
+			break
+		}
+		idx = idx + 1 + nextIdx
+	}
+
+	return false
 }
 
 func hasRepoFilter(query string) bool {
