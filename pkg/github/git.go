@@ -79,11 +79,7 @@ func GetRepositoryTree(t translations.TranslationHelperFunc) inventory.ServerToo
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}

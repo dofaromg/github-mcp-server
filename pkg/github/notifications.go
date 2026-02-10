@@ -539,11 +539,7 @@ func ManageRepositoryNotificationSubscription(t translations.TranslationHelperFu
 				return utils.NewToolResultErrorFromErr("failed to get GitHub client", err), nil, nil
 			}
 
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}

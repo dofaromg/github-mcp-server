@@ -48,11 +48,7 @@ func GetDependabotAlert(t translations.TranslationHelperFunc) inventory.ServerTo
 		},
 		[]scopes.Scope{scopes.SecurityEvents},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -132,11 +128,7 @@ func ListDependabotAlerts(t translations.TranslationHelperFunc) inventory.Server
 		},
 		[]scopes.Scope{scopes.SecurityEvents},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}

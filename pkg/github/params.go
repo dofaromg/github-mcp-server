@@ -98,6 +98,38 @@ func RequiredBigInt(args map[string]any, p string) (int64, error) {
 	return result, nil
 }
 
+// RequiredOwnerRepo extracts the required "owner" and "repo" parameters from the request.
+// This helper reduces code duplication across tools that require these common parameters.
+func RequiredOwnerRepo(args map[string]any) (owner, repo string, err error) {
+	owner, err = RequiredParam[string](args, "owner")
+	if err != nil {
+		return "", "", err
+	}
+
+	repo, err = RequiredParam[string](args, "repo")
+	if err != nil {
+		return "", "", err
+	}
+
+	return owner, repo, nil
+}
+
+// RequiredOwnerRepoName extracts the required "owner", "repo", and "name" parameters from the request.
+// This helper reduces code duplication across tools that require these common parameters.
+func RequiredOwnerRepoName(args map[string]any) (owner, repo, name string, err error) {
+	owner, repo, err = RequiredOwnerRepo(args)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	name, err = RequiredParam[string](args, "name")
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return owner, repo, name, nil
+}
+
 // OptionalParam is a helper function that can be used to fetch a requested parameter from the request.
 // It does the following checks:
 // 1. Checks if the parameter is present in the request, if not, it returns its zero-value

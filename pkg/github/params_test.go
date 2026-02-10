@@ -501,3 +501,146 @@ func TestOptionalPaginationParams(t *testing.T) {
 		})
 	}
 }
+
+func TestRequiredOwnerRepo(t *testing.T) {
+	tests := []struct {
+		name        string
+		params      map[string]any
+		expectOwner string
+		expectRepo  string
+		expectError bool
+	}{
+		{
+			name: "valid owner and repo",
+			params: map[string]any{
+				"owner": "github",
+				"repo":  "github-mcp-server",
+			},
+			expectOwner: "github",
+			expectRepo:  "github-mcp-server",
+			expectError: false,
+		},
+		{
+			name:        "missing owner",
+			params:      map[string]any{"repo": "github-mcp-server"},
+			expectError: true,
+		},
+		{
+			name:        "missing repo",
+			params:      map[string]any{"owner": "github"},
+			expectError: true,
+		},
+		{
+			name:        "empty params",
+			params:      map[string]any{},
+			expectError: true,
+		},
+		{
+			name: "owner wrong type",
+			params: map[string]any{
+				"owner": 123,
+				"repo":  "github-mcp-server",
+			},
+			expectError: true,
+		},
+		{
+			name: "repo wrong type",
+			params: map[string]any{
+				"owner": "github",
+				"repo":  123,
+			},
+			expectError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			owner, repo, err := RequiredOwnerRepo(tc.params)
+
+			if tc.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tc.expectOwner, owner)
+				assert.Equal(t, tc.expectRepo, repo)
+			}
+		})
+	}
+}
+
+func TestRequiredOwnerRepoName(t *testing.T) {
+	tests := []struct {
+		name        string
+		params      map[string]any
+		expectOwner string
+		expectRepo  string
+		expectName  string
+		expectError bool
+	}{
+		{
+			name: "valid owner, repo, and name",
+			params: map[string]any{
+				"owner": "github",
+				"repo":  "github-mcp-server",
+				"name":  "bug",
+			},
+			expectOwner: "github",
+			expectRepo:  "github-mcp-server",
+			expectName:  "bug",
+			expectError: false,
+		},
+		{
+			name: "missing name",
+			params: map[string]any{
+				"owner": "github",
+				"repo":  "github-mcp-server",
+			},
+			expectError: true,
+		},
+		{
+			name: "missing owner",
+			params: map[string]any{
+				"repo": "github-mcp-server",
+				"name": "bug",
+			},
+			expectError: true,
+		},
+		{
+			name: "missing repo",
+			params: map[string]any{
+				"owner": "github",
+				"name":  "bug",
+			},
+			expectError: true,
+		},
+		{
+			name:        "empty params",
+			params:      map[string]any{},
+			expectError: true,
+		},
+		{
+			name: "name wrong type",
+			params: map[string]any{
+				"owner": "github",
+				"repo":  "github-mcp-server",
+				"name":  123,
+			},
+			expectError: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			owner, repo, name, err := RequiredOwnerRepoName(tc.params)
+
+			if tc.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tc.expectOwner, owner)
+				assert.Equal(t, tc.expectRepo, repo)
+				assert.Equal(t, tc.expectName, name)
+			}
+		})
+	}
+}
