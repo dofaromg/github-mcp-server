@@ -107,12 +107,15 @@ func GetCommit(t translations.TranslationHelperFunc) inventory.ServerTool {
 			// Convert to minimal commit
 			minimalCommit := convertToMinimalCommit(commit, includeDiff)
 
-			r, err := json.Marshal(minimalCommit)
+			result, err := utils.NewToolResultJSON(minimalCommit)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -215,12 +218,15 @@ func ListCommits(t translations.TranslationHelperFunc) inventory.ServerTool {
 				minimalCommits[i] = convertToMinimalCommit(commit, false)
 			}
 
-			r, err := json.Marshal(minimalCommits)
+			result, err := utils.NewToolResultJSON(minimalCommits)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -302,12 +308,15 @@ func ListBranches(t translations.TranslationHelperFunc) inventory.ServerTool {
 				minimalBranches = append(minimalBranches, convertToMinimalBranch(branch))
 			}
 
-			r, err := json.Marshal(minimalBranches)
+			result, err := utils.NewToolResultJSON(minimalBranches)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -488,13 +497,14 @@ If the SHA is not provided, the tool will attempt to acquire it by fetching the 
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to create/update file", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(fileContent)
+			result, err := utils.NewToolResultJSON(fileContent)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
 
 			// Warn if file was updated without SHA validation (blind update)
 			if sha == "" && previousSHA != "" {
+				r, _ := json.Marshal(fileContent)
 				return utils.NewToolResultText(fmt.Sprintf(
 					"Warning: File updated without SHA validation. Previous file SHA was %s. "+
 						`Verify no unintended changes were overwritten: 
@@ -506,7 +516,7 @@ If the SHA is not provided, the tool will attempt to acquire it by fetching the 
 					previousSHA, path, string(r))), nil, nil
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -607,12 +617,15 @@ func CreateRepository(t translations.TranslationHelperFunc) inventory.ServerTool
 				URL: createdRepo.GetHTMLURL(),
 			}
 
-			r, err := json.Marshal(minimalResponse)
+			result, err := utils.NewToolResultJSON(minimalResponse)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -797,11 +810,15 @@ func GetFileContents(t translations.TranslationHelperFunc) inventory.ServerTool 
 				return matchFiles(ctx, client, owner, repo, ref, path, rawOpts, resp.StatusCode)
 			} else if dirContent != nil {
 				// file content or file SHA is nil which means it's a directory
-				r, err := json.Marshal(dirContent)
+				result, err := utils.NewToolResultJSON(dirContent)
+
 				if err != nil {
-					return utils.NewToolResultError("failed to marshal response"), nil, nil
+
+					return nil, nil, err
+
 				}
-				return utils.NewToolResultText(string(r)), nil, nil
+
+				return result, nil, nil
 			}
 
 			return utils.NewToolResultError("failed to get file contents"), nil, nil
@@ -893,12 +910,15 @@ func ForkRepository(t translations.TranslationHelperFunc) inventory.ServerTool {
 				URL: forkedRepo.GetHTMLURL(),
 			}
 
-			r, err := json.Marshal(minimalResponse)
+			result, err := utils.NewToolResultJSON(minimalResponse)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1083,12 +1103,15 @@ func DeleteFile(t translations.TranslationHelperFunc) inventory.ServerTool {
 				"content": nil,
 			}
 
-			r, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1196,12 +1219,15 @@ func CreateBranch(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(createdRef)
+			result, err := utils.NewToolResultJSON(createdRef)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1430,12 +1456,15 @@ func PushFiles(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(updatedRef)
+			result, err := utils.NewToolResultJSON(updatedRef)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1509,12 +1538,15 @@ func ListTags(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list tags", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(tags)
+			result, err := utils.NewToolResultJSON(tags)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1607,12 +1639,15 @@ func GetTag(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get tag object", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(tagObj)
+			result, err := utils.NewToolResultJSON(tagObj)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1682,12 +1717,15 @@ func ListReleases(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list releases", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(releases)
+			result, err := utils.NewToolResultJSON(releases)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1748,12 +1786,15 @@ func GetLatestRelease(t translations.TranslationHelperFunc) inventory.ServerTool
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get latest release", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(release)
+			result, err := utils.NewToolResultJSON(release)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1825,12 +1866,15 @@ func GetReleaseByTag(t translations.TranslationHelperFunc) inventory.ServerTool 
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get release by tag", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(release)
+			result, err := utils.NewToolResultJSON(release)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -1957,12 +2001,15 @@ func ListStarredRepositories(t translations.TranslationHelperFunc) inventory.Ser
 				minimalRepos = append(minimalRepos, minimalRepo)
 			}
 
-			r, err := json.Marshal(minimalRepos)
+			result, err := utils.NewToolResultJSON(minimalRepos)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal starred repositories: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }

@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -100,12 +99,15 @@ func GetLabel(t translations.TranslationHelperFunc) inventory.ServerTool {
 				"description": string(query.Repository.Label.Description),
 			}
 
-			out, err := json.Marshal(label)
+			result, err := utils.NewToolResultJSON(label)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal label: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(out)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -199,12 +201,15 @@ func ListLabels(t translations.TranslationHelperFunc) inventory.ServerTool {
 				"totalCount": int(query.Repository.Labels.TotalCount),
 			}
 
-			out, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal labels: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(out)), nil, nil
+			return result, nil, nil
 		},
 	)
 }

@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -152,12 +151,15 @@ func ListProjects(t translations.TranslationHelperFunc) inventory.ServerTool {
 				"pageInfo": buildPageInfo(resp),
 			}
 
-			r, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -243,12 +245,15 @@ func GetProject(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			minimalProject := convertToMinimalProject(project)
-			r, err := json.Marshal(minimalProject)
+			result, err := utils.NewToolResultJSON(minimalProject)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -352,12 +357,15 @@ func ListProjectFields(t translations.TranslationHelperFunc) inventory.ServerToo
 				"pageInfo": buildPageInfo(resp),
 			}
 
-			r, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -447,12 +455,15 @@ func GetProjectField(t translations.TranslationHelperFunc) inventory.ServerTool 
 				}
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get project field", resp, body), nil, nil
 			}
-			r, err := json.Marshal(projectField)
+			result, err := utils.NewToolResultJSON(projectField)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -586,12 +597,15 @@ func ListProjectItems(t translations.TranslationHelperFunc) inventory.ServerTool
 				"pageInfo": buildPageInfo(resp),
 			}
 
-			r, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -695,12 +709,15 @@ func GetProjectItem(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(projectItem)
+			result, err := utils.NewToolResultJSON(projectItem)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -809,12 +826,15 @@ func AddProjectItem(t translations.TranslationHelperFunc) inventory.ServerTool {
 				}
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, ProjectAddFailedError, resp, body), nil, nil
 			}
-			r, err := json.Marshal(addedItem)
+			result, err := utils.NewToolResultJSON(addedItem)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -924,12 +944,15 @@ func UpdateProjectItem(t translations.TranslationHelperFunc) inventory.ServerToo
 				}
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, ProjectUpdateFailedError, resp, body), nil, nil
 			}
-			r, err := json.Marshal(updatedItem)
+			result, err := utils.NewToolResultJSON(updatedItem)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedProjects
@@ -1508,12 +1531,15 @@ func listProjects(ctx context.Context, client *github.Client, args map[string]an
 			"pageInfo": buildPageInfo(resp),
 		}
 
-		r, err := json.Marshal(response)
+		result, err := utils.NewToolResultJSON(response)
+
 		if err != nil {
-			return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+			return nil, nil, err
+
 		}
 
-		return utils.NewToolResultText(string(r)), nil, nil
+		return result, nil, nil
 	}
 
 	return nil, nil, fmt.Errorf("unexpected state in listProjects")
@@ -1564,11 +1590,15 @@ func listProjectsFromBothOwnerTypes(ctx context.Context, client *github.Client, 
 		defer func() { _ = resp.Body.Close() }()
 	}
 
-	r, err := json.Marshal(response)
+	result, err := utils.NewToolResultJSON(response)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
-	return utils.NewToolResultText(string(r)), nil, nil
+
+	return result, nil, nil
 }
 
 func listProjectFields(ctx context.Context, client *github.Client, args map[string]any, owner, ownerType string) (*mcp.CallToolResult, any, error) {
@@ -1609,12 +1639,15 @@ func listProjectFields(ctx context.Context, client *github.Client, args map[stri
 		"pageInfo": buildPageInfo(resp),
 	}
 
-	r, err := json.Marshal(response)
+	result, err := utils.NewToolResultJSON(response)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func listProjectItems(ctx context.Context, client *github.Client, args map[string]any, owner, ownerType string) (*mcp.CallToolResult, any, error) {
@@ -1674,12 +1707,15 @@ func listProjectItems(ctx context.Context, client *github.Client, args map[strin
 		"pageInfo": buildPageInfo(resp),
 	}
 
-	r, err := json.Marshal(response)
+	result, err := utils.NewToolResultJSON(response)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func getProject(ctx context.Context, client *github.Client, owner, ownerType string, projectNumber int) (*mcp.CallToolResult, any, error) {
@@ -1710,12 +1746,15 @@ func getProject(ctx context.Context, client *github.Client, owner, ownerType str
 	}
 
 	minimalProject := convertToMinimalProject(project)
-	r, err := json.Marshal(minimalProject)
+	result, err := utils.NewToolResultJSON(minimalProject)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func getProjectField(ctx context.Context, client *github.Client, owner, ownerType string, projectNumber int, fieldID int64) (*mcp.CallToolResult, any, error) {
@@ -1745,12 +1784,15 @@ func getProjectField(ctx context.Context, client *github.Client, owner, ownerTyp
 		}
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get project field", resp, body), nil, nil
 	}
-	r, err := json.Marshal(projectField)
+	result, err := utils.NewToolResultJSON(projectField)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func getProjectItem(ctx context.Context, client *github.Client, owner, ownerType string, projectNumber int, itemID int64, fields []int64) (*mcp.CallToolResult, any, error) {
@@ -1788,12 +1830,15 @@ func getProjectItem(ctx context.Context, client *github.Client, owner, ownerType
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get project item", resp, body), nil, nil
 	}
 
-	r, err := json.Marshal(projectItem)
+	result, err := utils.NewToolResultJSON(projectItem)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func updateProjectItem(ctx context.Context, client *github.Client, owner, ownerType string, projectNumber int, itemID int64, fieldValue map[string]any) (*mcp.CallToolResult, any, error) {
@@ -1827,12 +1872,15 @@ func updateProjectItem(ctx context.Context, client *github.Client, owner, ownerT
 		}
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, ProjectUpdateFailedError, resp, body), nil, nil
 	}
-	r, err := json.Marshal(updatedItem)
+	result, err := utils.NewToolResultJSON(updatedItem)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func deleteProjectItem(ctx context.Context, client *github.Client, owner, ownerType string, projectNumber int, itemID int64) (*mcp.CallToolResult, any, error) {
@@ -1944,12 +1992,15 @@ func addProjectItem(ctx context.Context, gqlClient *githubv4.Client, owner, owne
 		"message": fmt.Sprintf("Successfully added %s %s/%s#%d to project %s/%d", itemType, itemOwner, itemRepo, itemNumber, owner, projectNumber),
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 type pageInfo struct {

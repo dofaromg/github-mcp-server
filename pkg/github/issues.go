@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -372,12 +371,7 @@ func GetIssue(ctx context.Context, client *github.Client, deps ToolDependencies,
 		}
 	}
 
-	r, err := json.Marshal(issue)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal issue: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(issue)
 }
 
 func GetIssueComments(ctx context.Context, client *github.Client, deps ToolDependencies, owner string, repo string, issueNumber int, pagination PaginationParams) (*mcp.CallToolResult, error) {
@@ -432,12 +426,7 @@ func GetIssueComments(ctx context.Context, client *github.Client, deps ToolDepen
 		comments = filteredComments
 	}
 
-	r, err := json.Marshal(comments)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(comments)
 }
 
 func GetSubIssues(ctx context.Context, client *github.Client, deps ToolDependencies, owner string, repo string, issueNumber int, pagination PaginationParams) (*mcp.CallToolResult, error) {
@@ -498,12 +487,7 @@ func GetSubIssues(ctx context.Context, client *github.Client, deps ToolDependenc
 		subIssues = filteredSubIssues
 	}
 
-	r, err := json.Marshal(subIssues)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(subIssues)
 }
 
 func GetIssueLabels(ctx context.Context, client *githubv4.Client, owner string, repo string, issueNumber int) (*mcp.CallToolResult, error) {
@@ -550,12 +534,7 @@ func GetIssueLabels(ctx context.Context, client *githubv4.Client, owner string, 
 		"totalCount": int(query.Repository.Issue.Labels.TotalCount),
 	}
 
-	out, err := json.Marshal(response)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(out)), nil
+	return utils.NewToolResultJSON(response)
 
 }
 
@@ -606,12 +585,15 @@ func ListIssueTypes(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list issue types", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(issueTypes)
+			result, err := utils.NewToolResultJSON(issueTypes)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal issue types", err), nil, nil
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		})
 }
 
@@ -686,12 +668,15 @@ func AddIssueComment(t translations.TranslationHelperFunc) inventory.ServerTool 
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to create comment", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(createdComment)
+			result, err := utils.NewToolResultJSON(createdComment)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		})
 }
 
@@ -830,12 +815,7 @@ func AddSubIssue(ctx context.Context, client *github.Client, owner string, repo 
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to add sub-issue", resp, body), nil
 	}
 
-	r, err := json.Marshal(subIssue)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(subIssue)
 
 }
 
@@ -862,12 +842,7 @@ func RemoveSubIssue(ctx context.Context, client *github.Client, owner string, re
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to remove sub-issue", resp, body), nil
 	}
 
-	r, err := json.Marshal(subIssue)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(subIssue)
 }
 
 func ReprioritizeSubIssue(ctx context.Context, client *github.Client, owner string, repo string, issueNumber int, subIssueID int, afterID int, beforeID int) (*mcp.CallToolResult, error) {
@@ -911,12 +886,7 @@ func ReprioritizeSubIssue(ctx context.Context, client *github.Client, owner stri
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to reprioritize sub-issue", resp, body), nil
 	}
 
-	r, err := json.Marshal(subIssue)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(subIssue)
 }
 
 // SearchIssues creates a tool to search for issues.
@@ -1206,12 +1176,7 @@ func CreateIssue(ctx context.Context, client *github.Client, owner string, repo 
 		URL: issue.GetHTMLURL(),
 	}
 
-	r, err := json.Marshal(minimalResponse)
-	if err != nil {
-		return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(minimalResponse)
 }
 
 func UpdateIssue(ctx context.Context, client *github.Client, gqlClient *githubv4.Client, owner string, repo string, issueNumber int, title string, body string, assignees []string, labels []string, milestoneNum int, issueType string, state string, stateReason string, duplicateOf int) (*mcp.CallToolResult, error) {
@@ -1331,12 +1296,7 @@ func UpdateIssue(ctx context.Context, client *github.Client, gqlClient *githubv4
 		URL: updatedIssue.GetHTMLURL(),
 	}
 
-	r, err := json.Marshal(minimalResponse)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(minimalResponse)
 }
 
 // ListIssues creates a tool to list and filter repository issues
@@ -1569,11 +1529,15 @@ func ListIssues(t translations.TranslationHelperFunc) inventory.ServerTool {
 				},
 				"totalCount": totalCount,
 			}
-			out, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal issues: %w", err)
+
+				return nil, nil, err
+
 			}
-			return utils.NewToolResultText(string(out)), nil, nil
+
+			return result, nil, nil
 		})
 }
 
@@ -1980,12 +1944,15 @@ func AssignCopilotToIssue(t translations.TranslationHelperFunc) inventory.Server
 				result["note"] = "The pull request may still be in progress. Once created, the PR number can be used to check job status, or check the issue timeline for updates."
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
+
 			if err != nil {
-				return utils.NewToolResultError(fmt.Sprintf("failed to marshal response: %s", err)), nil, nil
+
+				return nil, result, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), result, nil
+			return toolResult, result, nil
 		})
 }
 

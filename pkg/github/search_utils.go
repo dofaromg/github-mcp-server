@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -191,10 +190,5 @@ func searchHandler(
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, errorPrefix, resp, body), nil
 	}
 
-	r, err := json.Marshal(result)
-	if err != nil {
-		return utils.NewToolResultErrorFromErr(errorPrefix+": failed to marshal response", err), nil
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(result)
 }

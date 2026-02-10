@@ -1,6 +1,11 @@
 package utils //nolint:revive //TODO: figure out a better name for this package
 
-import "github.com/modelcontextprotocol/go-sdk/mcp"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+)
 
 func NewToolResultText(message string) *mcp.CallToolResult {
 	return &mcp.CallToolResult{
@@ -46,4 +51,14 @@ func NewToolResultResource(message string, contents *mcp.ResourceContents) *mcp.
 		},
 		IsError: false,
 	}
+}
+
+// NewToolResultJSON marshals the given value to JSON and returns a text result.
+// If marshaling fails, it returns an error result instead.
+func NewToolResultJSON(v any) (*mcp.CallToolResult, error) {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal response: %w", err)
+	}
+	return NewToolResultText(string(data)), nil
 }

@@ -79,12 +79,15 @@ func GetCodeScanningAlert(t translations.TranslationHelperFunc) inventory.Server
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get alert", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(alert)
+			result, err := utils.NewToolResultJSON(alert)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal alert", err), nil, nil
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -178,12 +181,15 @@ func ListCodeScanningAlerts(t translations.TranslationHelperFunc) inventory.Serv
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list alerts", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(alerts)
+			result, err := utils.NewToolResultJSON(alerts)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal alerts", err), nil, nil
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }

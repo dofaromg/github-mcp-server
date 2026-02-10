@@ -198,12 +198,15 @@ func ListGlobalSecurityAdvisories(t translations.TranslationHelperFunc) inventor
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list advisories", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(advisories)
+			result, err := utils.NewToolResultJSON(advisories)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal advisories: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -298,12 +301,15 @@ func ListRepositorySecurityAdvisories(t translations.TranslationHelperFunc) inve
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list repository advisories", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(advisories)
+			result, err := utils.NewToolResultJSON(advisories)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal advisories: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -355,12 +361,15 @@ func GetGlobalSecurityAdvisory(t translations.TranslationHelperFunc) inventory.S
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get advisory", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(advisory)
+			result, err := utils.NewToolResultJSON(advisory)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal advisory: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -450,12 +459,15 @@ func ListOrgRepositorySecurityAdvisories(t translations.TranslationHelperFunc) i
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list organization repository advisories", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(advisories)
+			result, err := utils.NewToolResultJSON(advisories)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal advisories: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }

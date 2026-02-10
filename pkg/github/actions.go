@@ -105,12 +105,15 @@ func ListWorkflows(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(workflows)
+			result, err := utils.NewToolResultJSON(workflows)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -256,12 +259,15 @@ func ListWorkflowRuns(t translations.TranslationHelperFunc) inventory.ServerTool
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(workflowRuns)
+			result, err := utils.NewToolResultJSON(workflowRuns)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -365,12 +371,11 @@ func RunWorkflow(t translations.TranslationHelperFunc) inventory.ServerTool {
 				"status_code":   resp.StatusCode,
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -430,12 +435,15 @@ func GetWorkflowRun(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(workflowRun)
+			result, err := utils.NewToolResultJSON(workflowRun)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -505,12 +513,11 @@ func GetWorkflowRunLogs(t translations.TranslationHelperFunc) inventory.ServerTo
 				"optimization_tip": "Use: get_job_logs with parameters {run_id: " + fmt.Sprintf("%d", runID) + ", failed_only: true} for more efficient failed job debugging",
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -602,12 +609,15 @@ func ListWorkflowJobs(t translations.TranslationHelperFunc) inventory.ServerTool
 				"optimization_tip": fmt.Sprintf("For debugging failed jobs, consider using get_job_logs with failed_only=true and run_id=%d to get logs directly without needing to list jobs first", runID),
 			}
 
-			r, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -748,8 +758,11 @@ func handleFailedJobLogs(ctx context.Context, client *github.Client, owner, repo
 			"total_jobs":  len(jobs.Jobs),
 			"failed_jobs": 0,
 		}
-		r, _ := json.Marshal(result)
-		return utils.NewToolResultText(string(r)), nil, nil
+		toolResult, err := utils.NewToolResultJSON(result)
+		if err != nil {
+			return nil, nil, err
+		}
+		return toolResult, nil, nil
 	}
 
 	// Collect logs for all failed jobs
@@ -779,12 +792,11 @@ func handleFailedJobLogs(ctx context.Context, client *github.Client, owner, repo
 		"return_format": map[string]bool{"content": returnContent, "urls": !returnContent},
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 // handleSingleJobLogs gets logs for a single job
@@ -794,12 +806,15 @@ func handleSingleJobLogs(ctx context.Context, client *github.Client, owner, repo
 		return ghErrors.NewGitHubAPIErrorResponse(ctx, "failed to get job logs", resp, err), nil, nil
 	}
 
-	r, err := json.Marshal(jobResult)
+	result, err := utils.NewToolResultJSON(jobResult)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 // getJobLogData retrieves log data for a single job, either as URL or content
@@ -936,12 +951,11 @@ func RerunWorkflowRun(t translations.TranslationHelperFunc) inventory.ServerTool
 				"status_code": resp.StatusCode,
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1008,12 +1022,11 @@ func RerunFailedJobs(t translations.TranslationHelperFunc) inventory.ServerTool 
 				"status_code": resp.StatusCode,
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1082,12 +1095,11 @@ func CancelWorkflowRun(t translations.TranslationHelperFunc) inventory.ServerToo
 				"status_code": resp.StatusCode,
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1159,12 +1171,15 @@ func ListWorkflowRunArtifacts(t translations.TranslationHelperFunc) inventory.Se
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(artifacts)
+			result, err := utils.NewToolResultJSON(artifacts)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1233,12 +1248,11 @@ func DownloadWorkflowRunArtifact(t translations.TranslationHelperFunc) inventory
 				"artifact_id":  artifactID,
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1306,12 +1320,11 @@ func DeleteWorkflowRunLogs(t translations.TranslationHelperFunc) inventory.Serve
 				"status_code": resp.StatusCode,
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1371,12 +1384,15 @@ func GetWorkflowRunUsage(t translations.TranslationHelperFunc) inventory.ServerT
 			}
 			defer func() { _ = resp.Body.Close() }()
 
-			r, err := json.Marshal(usage)
+			result, err := utils.NewToolResultJSON(usage)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 	tool.FeatureFlagEnable = FeatureFlagHoldbackConsolidatedActions
@@ -1926,12 +1942,15 @@ func getWorkflow(ctx context.Context, client *github.Client, owner, repo, resour
 	}
 
 	defer func() { _ = resp.Body.Close() }()
-	r, err := json.Marshal(workflow)
+	result, err := utils.NewToolResultJSON(workflow)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal workflow: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func getWorkflowRun(ctx context.Context, client *github.Client, owner, repo string, resourceID int64) (*mcp.CallToolResult, any, error) {
@@ -1940,11 +1959,15 @@ func getWorkflowRun(ctx context.Context, client *github.Client, owner, repo stri
 		return ghErrors.NewGitHubAPIErrorResponse(ctx, "failed to get workflow run", resp, err), nil, nil
 	}
 	defer func() { _ = resp.Body.Close() }()
-	r, err := json.Marshal(workflowRun)
+	result, err := utils.NewToolResultJSON(workflowRun)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal workflow run: %w", err)
+
+		return nil, nil, err
+
 	}
-	return utils.NewToolResultText(string(r)), nil, nil
+
+	return result, nil, nil
 }
 
 func getWorkflowJob(ctx context.Context, client *github.Client, owner, repo string, resourceID int64) (*mcp.CallToolResult, any, error) {
@@ -1953,11 +1976,15 @@ func getWorkflowJob(ctx context.Context, client *github.Client, owner, repo stri
 		return ghErrors.NewGitHubAPIErrorResponse(ctx, "failed to get workflow job", resp, err), nil, nil
 	}
 	defer func() { _ = resp.Body.Close() }()
-	r, err := json.Marshal(workflowJob)
+	result, err := utils.NewToolResultJSON(workflowJob)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal workflow job: %w", err)
+
+		return nil, nil, err
+
 	}
-	return utils.NewToolResultText(string(r)), nil, nil
+
+	return result, nil, nil
 }
 
 func listWorkflows(ctx context.Context, client *github.Client, owner, repo string, pagination PaginationParams) (*mcp.CallToolResult, any, error) {
@@ -1972,12 +1999,15 @@ func listWorkflows(ctx context.Context, client *github.Client, owner, repo strin
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	r, err := json.Marshal(workflows)
+	result, err := utils.NewToolResultJSON(workflows)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal workflows: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func listWorkflowRuns(ctx context.Context, client *github.Client, args map[string]any, owner, repo, resourceID string, pagination PaginationParams) (*mcp.CallToolResult, any, error) {
@@ -2022,12 +2052,15 @@ func listWorkflowRuns(ctx context.Context, client *github.Client, args map[strin
 	}
 
 	defer func() { _ = resp.Body.Close() }()
-	r, err := json.Marshal(workflowRuns)
+	result, err := utils.NewToolResultJSON(workflowRuns)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal workflow runs: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func listWorkflowJobs(ctx context.Context, client *github.Client, args map[string]any, owner, repo string, resourceID int64, pagination PaginationParams) (*mcp.CallToolResult, any, error) {
@@ -2061,12 +2094,15 @@ func listWorkflowJobs(ctx context.Context, client *github.Client, args map[strin
 	}
 
 	defer func() { _ = resp.Body.Close() }()
-	r, err := json.Marshal(response)
+	result, err := utils.NewToolResultJSON(response)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal workflow jobs: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func listWorkflowArtifacts(ctx context.Context, client *github.Client, owner, repo string, resourceID int64, pagination PaginationParams) (*mcp.CallToolResult, any, error) {
@@ -2081,12 +2117,15 @@ func listWorkflowArtifacts(ctx context.Context, client *github.Client, owner, re
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	r, err := json.Marshal(artifacts)
+	result, err := utils.NewToolResultJSON(artifacts)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func downloadWorkflowArtifact(ctx context.Context, client *github.Client, owner, repo string, resourceID int64) (*mcp.CallToolResult, any, error) {
@@ -2105,12 +2144,11 @@ func downloadWorkflowArtifact(ctx context.Context, client *github.Client, owner,
 		"artifact_id":  resourceID,
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 func getWorkflowRunLogsURL(ctx context.Context, client *github.Client, owner, repo string, runID int64) (*mcp.CallToolResult, any, error) {
@@ -2130,12 +2168,11 @@ func getWorkflowRunLogsURL(ctx context.Context, client *github.Client, owner, re
 		"optimization_tip": "Use: get_job_logs with parameters {run_id: " + fmt.Sprintf("%d", runID) + ", failed_only: true} for more efficient failed job debugging",
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 func getWorkflowRunUsage(ctx context.Context, client *github.Client, owner, repo string, resourceID int64) (*mcp.CallToolResult, any, error) {
@@ -2145,12 +2182,15 @@ func getWorkflowRunUsage(ctx context.Context, client *github.Client, owner, repo
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	r, err := json.Marshal(usage)
+	result, err := utils.NewToolResultJSON(usage)
+
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+		return nil, nil, err
+
 	}
 
-	return utils.NewToolResultText(string(r)), nil, nil
+	return result, nil, nil
 }
 
 func runWorkflow(ctx context.Context, client *github.Client, owner, repo, workflowID, ref string, inputs map[string]interface{}) (*mcp.CallToolResult, any, error) {
@@ -2186,12 +2226,11 @@ func runWorkflow(ctx context.Context, client *github.Client, owner, repo, workfl
 		"status_code":   resp.StatusCode,
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 func rerunWorkflowRun(ctx context.Context, client *github.Client, owner, repo string, runID int64) (*mcp.CallToolResult, any, error) {
@@ -2208,12 +2247,11 @@ func rerunWorkflowRun(ctx context.Context, client *github.Client, owner, repo st
 		"status_code": resp.StatusCode,
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 func rerunFailedJobs(ctx context.Context, client *github.Client, owner, repo string, runID int64) (*mcp.CallToolResult, any, error) {
@@ -2230,12 +2268,11 @@ func rerunFailedJobs(ctx context.Context, client *github.Client, owner, repo str
 		"status_code": resp.StatusCode,
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 func cancelWorkflowRun(ctx context.Context, client *github.Client, owner, repo string, runID int64) (*mcp.CallToolResult, any, error) {
@@ -2255,12 +2292,11 @@ func cancelWorkflowRun(ctx context.Context, client *github.Client, owner, repo s
 		"status_code": resp.StatusCode,
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }
 
 func deleteWorkflowRunLogs(ctx context.Context, client *github.Client, owner, repo string, runID int64) (*mcp.CallToolResult, any, error) {
@@ -2277,10 +2313,9 @@ func deleteWorkflowRunLogs(ctx context.Context, client *github.Client, owner, re
 		"status_code": resp.StatusCode,
 	}
 
-	r, err := json.Marshal(result)
+	toolResult, err := utils.NewToolResultJSON(result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+		return nil, nil, err
 	}
-
-	return utils.NewToolResultText(string(r)), nil, nil
+	return toolResult, nil, nil
 }

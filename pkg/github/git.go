@@ -3,7 +3,6 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	ghErrors "github.com/github/github-mcp-server/pkg/errors"
@@ -162,12 +161,15 @@ func GetRepositoryTree(t translations.TranslationHelperFunc) inventory.ServerToo
 				Count:     len(filteredEntries),
 			}
 
-			r, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
+
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal response: %w", err)
+
+				return nil, nil, err
+
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
