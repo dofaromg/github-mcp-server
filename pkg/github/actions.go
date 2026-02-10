@@ -623,7 +623,7 @@ func ListWorkflowJobs(t translations.TranslationHelperFunc) inventory.ServerTool
 			// Add optimization tip for failed job debugging
 			response := map[string]any{
 				"jobs":             jobs,
-				"optimization_tip": "For debugging failed jobs, consider using get_job_logs with failed_only=true and run_id=" + fmt.Sprintf("%d", runID) + " to get logs directly without needing to list jobs first",
+				"optimization_tip": fmt.Sprintf("For debugging failed jobs, consider using get_job_logs with failed_only=true and run_id=%d to get logs directly without needing to list jobs first", runID),
 			}
 
 			r, err := json.Marshal(response)

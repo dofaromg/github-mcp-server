@@ -300,33 +300,32 @@ func completePath(ctx context.Context, client *github.Client, resolved map[strin
 		}
 	}
 
-	var values []string
+	// Helper function to extract last segment after final slash for filtering
+	matchesFilter := func(path, filter string) bool {
+		if filter == "" {
+			return true
+		}
+		last := path
+		// For directories, trim trailing slash before finding last segment
+		trimmed := strings.TrimRight(path, "/")
+		if idx := strings.LastIndex(trimmed, "/"); idx >= 0 {
+			last = trimmed[idx+1:]
+		}
+		return strings.HasPrefix(last, filter)
+	}
+
+	// Pre-allocate with estimated capacity
+	values := make([]string, 0, len(dirs)+len(files))
+
 	// Add directories first, then files, both filtered
 	for dir := range dirs {
-		// Only filter on the last segment after the last slash
-		if filter == "" {
+		if matchesFilter(dir, filter) {
 			values = append(values, dir)
-		} else {
-			last := dir
-			if idx := strings.LastIndex(strings.TrimRight(dir, "/"), "/"); idx >= 0 {
-				last = dir[idx+1:]
-			}
-			if strings.HasPrefix(last, filter) {
-				values = append(values, dir)
-			}
 		}
 	}
 	for file := range files {
-		if filter == "" {
+		if matchesFilter(file, filter) {
 			values = append(values, file)
-		} else {
-			last := file
-			if idx := strings.LastIndex(file, "/"); idx >= 0 {
-				last = file[idx+1:]
-			}
-			if strings.HasPrefix(last, filter) {
-				values = append(values, file)
-			}
 		}
 	}
 
