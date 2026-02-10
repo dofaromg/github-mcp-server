@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -152,12 +151,11 @@ func ListNotifications(t translations.TranslationHelperFunc) inventory.ServerToo
 			}
 
 			// Marshal response to JSON
-			r, err := json.Marshal(notifications)
+			result, err := utils.NewToolResultJSON(notifications)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -388,12 +386,11 @@ func GetNotificationDetails(t translations.TranslationHelperFunc) inventory.Serv
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get notification details", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(thread)
+			result, err := utils.NewToolResultJSON(thread)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -486,11 +483,13 @@ func ManageNotificationSubscription(t translations.TranslationHelperFunc) invent
 				return utils.NewToolResultText("Notification subscription deleted"), nil, nil
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-			return utils.NewToolResultText(string(r)), nil, nil
+
+			return toolResult, nil, nil
 		},
 	)
 }
@@ -539,11 +538,7 @@ func ManageRepositoryNotificationSubscription(t translations.TranslationHelperFu
 				return utils.NewToolResultErrorFromErr("failed to get GitHub client", err), nil, nil
 			}
 
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -593,11 +588,13 @@ func ManageRepositoryNotificationSubscription(t translations.TranslationHelperFu
 				return utils.NewToolResultText("Repository subscription deleted"), nil, nil
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-			return utils.NewToolResultText(string(r)), nil, nil
+
+			return toolResult, nil, nil
 		},
 	)
 }

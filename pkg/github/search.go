@@ -111,7 +111,6 @@ func SearchRepositories(t translations.TranslationHelperFunc) inventory.ServerTo
 			}
 
 			// Return either minimal or full response based on parameter
-			var r []byte
 			if minimalOutput {
 				minimalRepos := make([]MinimalRepository, 0, len(result.Repositories))
 				for _, repo := range result.Repositories {
@@ -150,18 +149,18 @@ func SearchRepositories(t translations.TranslationHelperFunc) inventory.ServerTo
 					Items:             minimalRepos,
 				}
 
-				r, err = json.Marshal(minimalResult)
+				result, err := utils.NewToolResultJSON(minimalResult)
 				if err != nil {
-					return utils.NewToolResultErrorFromErr("failed to marshal minimal response", err), nil, nil
+					return nil, nil, err
 				}
-			} else {
-				r, err = json.Marshal(result)
-				if err != nil {
-					return utils.NewToolResultErrorFromErr("failed to marshal full response", err), nil, nil
-				}
+				return result, nil, nil
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			toolResult, err := utils.NewToolResultJSON(result)
+			if err != nil {
+				return nil, nil, err
+			}
+			return toolResult, nil, nil
 		},
 	)
 }
@@ -251,12 +250,13 @@ func SearchCode(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to search code", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		},
 	)
 }
@@ -340,11 +340,13 @@ func userOrOrgHandler(ctx context.Context, accountType string, deps ToolDependen
 		minimalResp.IncompleteResults = *result.IncompleteResults
 	}
 
-	r, err := json.Marshal(minimalResp)
+	toolResult, err := utils.NewToolResultJSON(minimalResp)
+
 	if err != nil {
-		return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+		return nil, nil, err
 	}
-	return utils.NewToolResultText(string(r)), nil, nil
+
+	return toolResult, nil, nil
 }
 
 // SearchUsers creates a tool to search for GitHub users.

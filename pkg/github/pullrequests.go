@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -76,11 +75,7 @@ Possible options:
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
 
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -186,12 +181,7 @@ func GetPullRequest(ctx context.Context, client *github.Client, deps ToolDepende
 		}
 	}
 
-	r, err := json.Marshal(pr)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(pr)
 }
 
 func GetPullRequestDiff(ctx context.Context, client *github.Client, owner, repo string, pullNumber int) (*mcp.CallToolResult, error) {
@@ -262,12 +252,7 @@ func GetPullRequestStatus(ctx context.Context, client *github.Client, owner, rep
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get combined status", resp, body), nil
 	}
 
-	r, err := json.Marshal(status)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(status)
 }
 
 func GetPullRequestFiles(ctx context.Context, client *github.Client, owner, repo string, pullNumber int, pagination PaginationParams) (*mcp.CallToolResult, error) {
@@ -293,12 +278,7 @@ func GetPullRequestFiles(ctx context.Context, client *github.Client, owner, repo
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get pull request files", resp, body), nil
 	}
 
-	r, err := json.Marshal(files)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(files)
 }
 
 // GraphQL types for review threads query
@@ -424,12 +404,7 @@ func GetPullRequestReviewComments(ctx context.Context, gqlClient *githubv4.Clien
 		"totalCount": int(query.Repository.PullRequest.ReviewThreads.TotalCount),
 	}
 
-	r, err := json.Marshal(response)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(response)
 }
 
 func GetPullRequestReviews(ctx context.Context, client *github.Client, deps ToolDependencies, owner, repo string, pullNumber int) (*mcp.CallToolResult, error) {
@@ -477,12 +452,7 @@ func GetPullRequestReviews(ctx context.Context, client *github.Client, deps Tool
 		}
 	}
 
-	r, err := json.Marshal(reviews)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return utils.NewToolResultJSON(reviews)
 }
 
 // CreatePullRequest creates a tool to create a new pull request.
@@ -539,11 +509,7 @@ func CreatePullRequest(t translations.TranslationHelperFunc) inventory.ServerToo
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -616,12 +582,11 @@ func CreatePullRequest(t translations.TranslationHelperFunc) inventory.ServerToo
 				URL: pr.GetHTMLURL(),
 			}
 
-			r, err := json.Marshal(minimalResponse)
+			result, err := utils.NewToolResultJSON(minimalResponse)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		})
 }
 
@@ -691,11 +656,7 @@ func UpdatePullRequest(t translations.TranslationHelperFunc) inventory.ServerToo
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -910,12 +871,11 @@ func UpdatePullRequest(t translations.TranslationHelperFunc) inventory.ServerToo
 				URL: finalPR.GetHTMLURL(),
 			}
 
-			r, err := json.Marshal(minimalResponse)
+			result, err := utils.NewToolResultJSON(minimalResponse)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("Failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		})
 }
 
@@ -961,11 +921,7 @@ func AddReplyToPullRequestComment(t translations.TranslationHelperFunc) inventor
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -1001,12 +957,11 @@ func AddReplyToPullRequestComment(t translations.TranslationHelperFunc) inventor
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to add reply to pull request comment", resp, bodyBytes), nil, nil
 			}
 
-			r, err := json.Marshal(comment)
+			result, err := utils.NewToolResultJSON(comment)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		})
 }
 
@@ -1064,11 +1019,7 @@ func ListPullRequests(t translations.TranslationHelperFunc) inventory.ServerTool
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -1144,12 +1095,11 @@ func ListPullRequests(t translations.TranslationHelperFunc) inventory.ServerTool
 				}
 			}
 
-			r, err := json.Marshal(prs)
+			result, err := utils.NewToolResultJSON(prs)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		})
 }
 
@@ -1201,11 +1151,7 @@ func MergePullRequest(t translations.TranslationHelperFunc) inventory.ServerTool
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -1253,12 +1199,13 @@ func MergePullRequest(t translations.TranslationHelperFunc) inventory.ServerTool
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to merge pull request", resp, bodyBytes), nil, nil
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		})
 }
 
@@ -1362,11 +1309,7 @@ func UpdatePullRequestBranch(t translations.TranslationHelperFunc) inventory.Ser
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}
@@ -1410,12 +1353,13 @@ func UpdatePullRequestBranch(t translations.TranslationHelperFunc) inventory.Ser
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to update pull request branch", resp, bodyBytes), nil, nil
 			}
 
-			r, err := json.Marshal(result)
+			toolResult, err := utils.NewToolResultJSON(result)
+
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
 
-			return utils.NewToolResultText(string(r)), nil, nil
+			return toolResult, nil, nil
 		})
 }
 
@@ -1966,12 +1910,7 @@ func RequestCopilotReview(t translations.TranslationHelperFunc) inventory.Server
 		},
 		[]scopes.Scope{scopes.Repo},
 		func(ctx context.Context, deps ToolDependencies, _ *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
-			owner, err := RequiredParam[string](args, "owner")
-			if err != nil {
-				return utils.NewToolResultError(err.Error()), nil, nil
-			}
-
-			repo, err := RequiredParam[string](args, "repo")
+			owner, repo, err := RequiredOwnerRepo(args)
 			if err != nil {
 				return utils.NewToolResultError(err.Error()), nil, nil
 			}

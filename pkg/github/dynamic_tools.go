@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/github/github-mcp-server/pkg/inventory"
@@ -144,12 +143,11 @@ func ListAvailableToolsets() inventory.ServerTool {
 					payload = append(payload, t)
 				}
 
-				r, err := json.Marshal(payload)
+				result, err := utils.NewToolResultJSON(payload)
 				if err != nil {
-					return nil, nil, fmt.Errorf("failed to marshal features: %w", err)
+					return nil, nil, err
 				}
-
-				return utils.NewToolResultText(string(r)), nil, nil
+				return result, nil, nil
 			}
 		},
 	)
@@ -205,12 +203,11 @@ func GetToolsetsTools(r *inventory.Inventory) inventory.ServerTool {
 					payload = append(payload, tool)
 				}
 
-				r, err := json.Marshal(payload)
+				result, err := utils.NewToolResultJSON(payload)
 				if err != nil {
-					return nil, nil, fmt.Errorf("failed to marshal features: %w", err)
+					return nil, nil, err
 				}
-
-				return utils.NewToolResultText(string(r)), nil, nil
+				return result, nil, nil
 			}
 		},
 	)

@@ -94,12 +94,11 @@ func ListGists(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to list gists", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(gists)
+			result, err := utils.NewToolResultJSON(gists)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -152,12 +151,11 @@ func GetGist(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get gist", resp, body), nil, nil
 			}
 
-			r, err := json.Marshal(gist)
+			result, err := utils.NewToolResultJSON(gist)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -255,12 +253,11 @@ func CreateGist(t translations.TranslationHelperFunc) inventory.ServerTool {
 				URL: createdGist.GetHTMLURL(),
 			}
 
-			r, err := json.Marshal(minimalResponse)
+			result, err := utils.NewToolResultJSON(minimalResponse)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -356,12 +353,11 @@ func UpdateGist(t translations.TranslationHelperFunc) inventory.ServerTool {
 				URL: updatedGist.GetHTMLURL(),
 			}
 
-			r, err := json.Marshal(minimalResponse)
+			result, err := utils.NewToolResultJSON(minimalResponse)
 			if err != nil {
-				return utils.NewToolResultErrorFromErr("failed to marshal response", err), nil, nil
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(r)), nil, nil
+			return result, nil, nil
 		},
 	)
 }

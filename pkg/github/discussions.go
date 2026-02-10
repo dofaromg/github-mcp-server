@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/github/github-mcp-server/pkg/inventory"
@@ -267,11 +266,11 @@ func ListDiscussions(t translations.TranslationHelperFunc) inventory.ServerTool 
 				"totalCount": totalCount,
 			}
 
-			out, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal discussions: %w", err)
+				return nil, nil, err
 			}
-			return utils.NewToolResultText(string(out)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -370,12 +369,11 @@ func GetDiscussion(t translations.TranslationHelperFunc) inventory.ServerTool {
 				response["answerChosenAt"] = d.AnswerChosenAt.Time
 			}
 
-			out, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal discussion: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(out)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -497,12 +495,11 @@ func GetDiscussionComments(t translations.TranslationHelperFunc) inventory.Serve
 				"totalCount": q.Repository.Discussion.Comments.TotalCount,
 			}
 
-			out, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal comments: %w", err)
+				return nil, nil, err
 			}
-
-			return utils.NewToolResultText(string(out)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
@@ -599,11 +596,11 @@ func ListDiscussionCategories(t translations.TranslationHelperFunc) inventory.Se
 				"totalCount": q.Repository.DiscussionCategories.TotalCount,
 			}
 
-			out, err := json.Marshal(response)
+			result, err := utils.NewToolResultJSON(response)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal discussion categories: %w", err)
+				return nil, nil, err
 			}
-			return utils.NewToolResultText(string(out)), nil, nil
+			return result, nil, nil
 		},
 	)
 }
