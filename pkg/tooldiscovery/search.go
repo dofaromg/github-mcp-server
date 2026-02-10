@@ -142,6 +142,12 @@ func scoreTool(
 	matchedTokens := make(map[string]struct{})
 
 	// Token-level matches for multi-word queries
+	// Build a map of property names for O(1) lookup instead of O(n) inner loop
+	propertySet := make(map[string]bool, len(propertyNames))
+	for _, prop := range propertyNames {
+		propertySet[prop] = true
+	}
+
 	for _, token := range queryTokens {
 		if strings.Contains(nameLower, token) {
 			score++
@@ -153,7 +159,8 @@ func scoreTool(
 			matches.Add("description:token")
 		}
 
-		for _, prop := range propertyNames {
+		// Check if any property contains this token using the pre-built set
+		for prop := range propertySet {
 			if strings.Contains(prop, token) {
 				// Only credit the first parameter match per token to avoid double-counting
 				score += 0.4
@@ -171,9 +178,21 @@ func scoreTool(
 	}
 
 	// Prefer names that cover query tokens directly, with fewer extra tokens
+	// Build a set of name tokens for O(1) lookup
+	nameTokenSet := make(map[string]bool, len(nameTokens))
+	for _, nt := range nameTokens {
+		nameTokenSet[nt] = true
+	}
+
 	nameTokenMatches := 0
 	for _, qt := range queryTokens {
-		for _, nt := range nameTokens {
+		// Check for exact match first (O(1))
+		if nameTokenSet[qt] {
+			nameTokenMatches++
+			continue
+		}
+		// Check for substring match (still need to iterate but only when no exact match)
+		for nt := range nameTokenSet {
 			if strings.Contains(nt, qt) {
 				nameTokenMatches++
 				break

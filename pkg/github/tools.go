@@ -332,28 +332,44 @@ func GenerateToolsetsHelp() string {
 	allToolsets := r.AvailableToolsets("context", "dynamic")
 	var availableBuf strings.Builder
 	const maxLineLength = 70
-	currentLine := ""
+	var currentLineBuf strings.Builder
+	lineStart := true
 
 	for i, toolset := range allToolsets {
 		id := string(toolset.ID)
-		switch {
-		case i == 0:
-			currentLine = id
-		case len(currentLine)+len(id)+2 <= maxLineLength:
-			currentLine += ", " + id
-		default:
+		currentLen := currentLineBuf.Len()
+
+		// Calculate what the new length would be with this id
+		newLen := currentLen
+		if !lineStart {
+			newLen += 2 // for ", "
+		}
+		newLen += len(id)
+
+		if newLen <= maxLineLength || lineStart {
+			// Fits on current line
+			if !lineStart {
+				currentLineBuf.WriteString(", ")
+			}
+			currentLineBuf.WriteString(id)
+			lineStart = false
+		} else {
+			// Need to start a new line
 			if availableBuf.Len() > 0 {
 				availableBuf.WriteString(",\n\t     ")
 			}
-			availableBuf.WriteString(currentLine)
-			currentLine = id
+			availableBuf.WriteString(currentLineBuf.String())
+			currentLineBuf.Reset()
+			currentLineBuf.WriteString(id)
 		}
-	}
-	if currentLine != "" {
-		if availableBuf.Len() > 0 {
-			availableBuf.WriteString(",\n\t     ")
+
+		// Handle last item
+		if i == len(allToolsets)-1 {
+			if availableBuf.Len() > 0 {
+				availableBuf.WriteString(",\n\t     ")
+			}
+			availableBuf.WriteString(currentLineBuf.String())
 		}
-		availableBuf.WriteString(currentLine)
 	}
 
 	// Build the complete help text using strings.Builder
