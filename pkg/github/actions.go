@@ -106,13 +106,9 @@ func ListWorkflows(t translations.TranslationHelperFunc) inventory.ServerTool {
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(workflows)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -260,13 +256,9 @@ func ListWorkflowRuns(t translations.TranslationHelperFunc) inventory.ServerTool
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(workflowRuns)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -436,13 +428,9 @@ func GetWorkflowRun(t translations.TranslationHelperFunc) inventory.ServerTool {
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(workflowRun)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -610,13 +598,9 @@ func ListWorkflowJobs(t translations.TranslationHelperFunc) inventory.ServerTool
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -807,13 +791,9 @@ func handleSingleJobLogs(ctx context.Context, client *github.Client, owner, repo
 	}
 
 	result, err := utils.NewToolResultJSON(jobResult)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1172,13 +1152,9 @@ func ListWorkflowRunArtifacts(t translations.TranslationHelperFunc) inventory.Se
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(artifacts)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1385,13 +1361,9 @@ func GetWorkflowRunUsage(t translations.TranslationHelperFunc) inventory.ServerT
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(usage)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1943,13 +1915,9 @@ func getWorkflow(ctx context.Context, client *github.Client, owner, repo, resour
 
 	defer func() { _ = resp.Body.Close() }()
 	result, err := utils.NewToolResultJSON(workflow)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1960,13 +1928,9 @@ func getWorkflowRun(ctx context.Context, client *github.Client, owner, repo stri
 	}
 	defer func() { _ = resp.Body.Close() }()
 	result, err := utils.NewToolResultJSON(workflowRun)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1977,13 +1941,9 @@ func getWorkflowJob(ctx context.Context, client *github.Client, owner, repo stri
 	}
 	defer func() { _ = resp.Body.Close() }()
 	result, err := utils.NewToolResultJSON(workflowJob)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -2000,13 +1960,9 @@ func listWorkflows(ctx context.Context, client *github.Client, owner, repo strin
 	defer func() { _ = resp.Body.Close() }()
 
 	result, err := utils.NewToolResultJSON(workflows)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -2053,13 +2009,9 @@ func listWorkflowRuns(ctx context.Context, client *github.Client, args map[strin
 
 	defer func() { _ = resp.Body.Close() }()
 	result, err := utils.NewToolResultJSON(workflowRuns)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -2095,13 +2047,9 @@ func listWorkflowJobs(ctx context.Context, client *github.Client, args map[strin
 
 	defer func() { _ = resp.Body.Close() }()
 	result, err := utils.NewToolResultJSON(response)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -2118,13 +2066,9 @@ func listWorkflowArtifacts(ctx context.Context, client *github.Client, owner, re
 	defer func() { _ = resp.Body.Close() }()
 
 	result, err := utils.NewToolResultJSON(artifacts)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -2183,13 +2127,9 @@ func getWorkflowRunUsage(ctx context.Context, client *github.Client, owner, repo
 	defer func() { _ = resp.Body.Close() }()
 
 	result, err := utils.NewToolResultJSON(usage)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 

@@ -152,13 +152,9 @@ func ListNotifications(t translations.TranslationHelperFunc) inventory.ServerToo
 
 			// Marshal response to JSON
 			result, err := utils.NewToolResultJSON(notifications)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -391,13 +387,9 @@ func GetNotificationDetails(t translations.TranslationHelperFunc) inventory.Serv
 			}
 
 			result, err := utils.NewToolResultJSON(thread)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

@@ -81,13 +81,9 @@ func GetDependabotAlert(t translations.TranslationHelperFunc) inventory.ServerTo
 			}
 
 			result, err := utils.NewToolResultJSON(alert)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -171,13 +167,9 @@ func ListDependabotAlerts(t translations.TranslationHelperFunc) inventory.Server
 			}
 
 			result, err := utils.NewToolResultJSON(alerts)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

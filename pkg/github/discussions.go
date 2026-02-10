@@ -267,13 +267,9 @@ func ListDiscussions(t translations.TranslationHelperFunc) inventory.ServerTool 
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -374,13 +370,9 @@ func GetDiscussion(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -504,13 +496,9 @@ func GetDiscussionComments(t translations.TranslationHelperFunc) inventory.Serve
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -609,13 +597,9 @@ func ListDiscussionCategories(t translations.TranslationHelperFunc) inventory.Se
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

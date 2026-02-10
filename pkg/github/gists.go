@@ -95,13 +95,9 @@ func ListGists(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(gists)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -156,13 +152,9 @@ func GetGist(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(gist)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -262,13 +254,9 @@ func CreateGist(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(minimalResponse)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -366,13 +354,9 @@ func UpdateGist(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(minimalResponse)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

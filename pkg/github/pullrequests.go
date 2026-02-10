@@ -583,13 +583,9 @@ func CreatePullRequest(t translations.TranslationHelperFunc) inventory.ServerToo
 			}
 
 			result, err := utils.NewToolResultJSON(minimalResponse)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }
@@ -876,13 +872,9 @@ func UpdatePullRequest(t translations.TranslationHelperFunc) inventory.ServerToo
 			}
 
 			result, err := utils.NewToolResultJSON(minimalResponse)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }
@@ -966,13 +958,9 @@ func AddReplyToPullRequestComment(t translations.TranslationHelperFunc) inventor
 			}
 
 			result, err := utils.NewToolResultJSON(comment)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }
@@ -1108,13 +1096,9 @@ func ListPullRequests(t translations.TranslationHelperFunc) inventory.ServerTool
 			}
 
 			result, err := utils.NewToolResultJSON(prs)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }

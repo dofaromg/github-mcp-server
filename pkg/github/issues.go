@@ -586,13 +586,9 @@ func ListIssueTypes(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(issueTypes)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }
@@ -669,13 +665,9 @@ func AddIssueComment(t translations.TranslationHelperFunc) inventory.ServerTool 
 			}
 
 			result, err := utils.NewToolResultJSON(createdComment)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }
@@ -1530,13 +1522,9 @@ func ListIssues(t translations.TranslationHelperFunc) inventory.ServerTool {
 				"totalCount": totalCount,
 			}
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		})
 }

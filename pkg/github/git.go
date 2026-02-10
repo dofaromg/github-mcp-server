@@ -162,13 +162,9 @@ func GetRepositoryTree(t translations.TranslationHelperFunc) inventory.ServerToo
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

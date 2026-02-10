@@ -80,13 +80,9 @@ func GetCodeScanningAlert(t translations.TranslationHelperFunc) inventory.Server
 			}
 
 			result, err := utils.NewToolResultJSON(alert)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -182,13 +178,9 @@ func ListCodeScanningAlerts(t translations.TranslationHelperFunc) inventory.Serv
 			}
 
 			result, err := utils.NewToolResultJSON(alerts)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

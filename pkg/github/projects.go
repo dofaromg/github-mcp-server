@@ -152,13 +152,9 @@ func ListProjects(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -246,13 +242,9 @@ func GetProject(t translations.TranslationHelperFunc) inventory.ServerTool {
 
 			minimalProject := convertToMinimalProject(project)
 			result, err := utils.NewToolResultJSON(minimalProject)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -358,13 +350,9 @@ func ListProjectFields(t translations.TranslationHelperFunc) inventory.ServerToo
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -456,13 +444,9 @@ func GetProjectField(t translations.TranslationHelperFunc) inventory.ServerTool 
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get project field", resp, body), nil, nil
 			}
 			result, err := utils.NewToolResultJSON(projectField)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -598,13 +582,9 @@ func ListProjectItems(t translations.TranslationHelperFunc) inventory.ServerTool
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -710,13 +690,9 @@ func GetProjectItem(t translations.TranslationHelperFunc) inventory.ServerTool {
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(projectItem)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -827,13 +803,9 @@ func AddProjectItem(t translations.TranslationHelperFunc) inventory.ServerTool {
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, ProjectAddFailedError, resp, body), nil, nil
 			}
 			result, err := utils.NewToolResultJSON(addedItem)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -945,13 +917,9 @@ func UpdateProjectItem(t translations.TranslationHelperFunc) inventory.ServerToo
 				return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, ProjectUpdateFailedError, resp, body), nil, nil
 			}
 			result, err := utils.NewToolResultJSON(updatedItem)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1532,13 +1500,9 @@ func listProjects(ctx context.Context, client *github.Client, args map[string]an
 		}
 
 		result, err := utils.NewToolResultJSON(response)
-
 		if err != nil {
-
 			return nil, nil, err
-
 		}
-
 		return result, nil, nil
 	}
 
@@ -1591,13 +1555,9 @@ func listProjectsFromBothOwnerTypes(ctx context.Context, client *github.Client, 
 	}
 
 	result, err := utils.NewToolResultJSON(response)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1640,13 +1600,9 @@ func listProjectFields(ctx context.Context, client *github.Client, args map[stri
 	}
 
 	result, err := utils.NewToolResultJSON(response)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1708,13 +1664,9 @@ func listProjectItems(ctx context.Context, client *github.Client, args map[strin
 	}
 
 	result, err := utils.NewToolResultJSON(response)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1747,13 +1699,9 @@ func getProject(ctx context.Context, client *github.Client, owner, ownerType str
 
 	minimalProject := convertToMinimalProject(project)
 	result, err := utils.NewToolResultJSON(minimalProject)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1785,13 +1733,9 @@ func getProjectField(ctx context.Context, client *github.Client, owner, ownerTyp
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, "failed to get project field", resp, body), nil, nil
 	}
 	result, err := utils.NewToolResultJSON(projectField)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1831,13 +1775,9 @@ func getProjectItem(ctx context.Context, client *github.Client, owner, ownerType
 	}
 
 	result, err := utils.NewToolResultJSON(projectItem)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 
@@ -1873,13 +1813,9 @@ func updateProjectItem(ctx context.Context, client *github.Client, owner, ownerT
 		return ghErrors.NewGitHubAPIStatusErrorResponse(ctx, ProjectUpdateFailedError, resp, body), nil, nil
 	}
 	result, err := utils.NewToolResultJSON(updatedItem)
-
 	if err != nil {
-
 		return nil, nil, err
-
 	}
-
 	return result, nil, nil
 }
 

@@ -144,13 +144,9 @@ func ListAvailableToolsets() inventory.ServerTool {
 				}
 
 				result, err := utils.NewToolResultJSON(payload)
-
 				if err != nil {
-
 					return nil, nil, err
-
 				}
-
 				return result, nil, nil
 			}
 		},
@@ -208,13 +204,9 @@ func GetToolsetsTools(r *inventory.Inventory) inventory.ServerTool {
 				}
 
 				result, err := utils.NewToolResultJSON(payload)
-
 				if err != nil {
-
 					return nil, nil, err
-
 				}
-
 				return result, nil, nil
 			}
 		},

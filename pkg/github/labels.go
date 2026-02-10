@@ -100,13 +100,9 @@ func GetLabel(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(label)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -202,13 +198,9 @@ func ListLabels(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
