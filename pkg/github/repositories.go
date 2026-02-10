@@ -504,7 +504,12 @@ If the SHA is not provided, the tool will attempt to acquire it by fetching the 
 
 			// Warn if file was updated without SHA validation (blind update)
 			if sha == "" && previousSHA != "" {
-				r, _ := json.Marshal(fileContent)
+				// Reuse the already-marshaled result for the warning message
+				r, marshalErr := json.Marshal(fileContent)
+				if marshalErr != nil {
+					// If we can't marshal for the warning, just return the result without warning
+					return result, nil, nil
+				}
 				return utils.NewToolResultText(fmt.Sprintf(
 					"Warning: File updated without SHA validation. Previous file SHA was %s. "+
 						`Verify no unintended changes were overwritten: 
