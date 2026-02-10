@@ -221,11 +221,25 @@ func scoreTool(
 		}
 	}
 
-	searchText := nameLower + " " + descLower
-	if len(propertyNames) > 0 {
-		searchText += " " + strings.Join(propertyNames, " ")
+	// Only compute fuzzy similarity if we need tie-breaking (expensive operation)
+	// Skip it when we already have a strong score from direct matches
+	var fuzzySim float64
+	if score < 10.0 { // Only compute for weaker matches where it matters
+		searchText := nameLower + " " + descLower
+		if len(propertyNames) > 0 {
+			// Limit concatenated property names to avoid very expensive Levenshtein computations
+			propText := strings.Join(propertyNames, " ")
+			if len(propText) > 200 {
+				propText = propText[:200]
+			}
+			searchText += " " + propText
+		}
+		// Limit total search text length for performance
+		if len(searchText) > 500 {
+			searchText = searchText[:500]
+		}
+		fuzzySim = normalizedSimilarity(searchText, queryLower)
 	}
-	fuzzySim := normalizedSimilarity(searchText, queryLower)
 
 	score += nameSim * 2
 	score += descSim * 0.8
