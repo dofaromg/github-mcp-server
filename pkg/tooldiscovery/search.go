@@ -171,8 +171,20 @@ func scoreTool(
 	}
 
 	// Prefer names that cover query tokens directly, with fewer extra tokens
+	// Build a set of name tokens for O(1) exact match lookup
+	nameTokenSet := make(map[string]bool, len(nameTokens))
+	for _, nt := range nameTokens {
+		nameTokenSet[nt] = true
+	}
+
 	nameTokenMatches := 0
 	for _, qt := range queryTokens {
+		// Check for exact match first (O(1))
+		if nameTokenSet[qt] {
+			nameTokenMatches++
+			continue
+		}
+		// Check for substring match using original slice for deterministic order
 		for _, nt := range nameTokens {
 			if strings.Contains(nt, qt) {
 				nameTokenMatches++
@@ -202,11 +214,25 @@ func scoreTool(
 		}
 	}
 
-	searchText := nameLower + " " + descLower
-	if len(propertyNames) > 0 {
-		searchText += " " + strings.Join(propertyNames, " ")
+	// Only compute fuzzy similarity if we need tie-breaking (expensive operation)
+	// Skip it when we already have a strong score from direct matches
+	var fuzzySim float64
+	if score < 10.0 { // Only compute for weaker matches where it matters
+		searchText := nameLower + " " + descLower
+		if len(propertyNames) > 0 {
+			// Limit concatenated property names to avoid very expensive Levenshtein computations
+			propText := strings.Join(propertyNames, " ")
+			if len(propText) > 200 {
+				propText = truncateString(propText, 200)
+			}
+			searchText += " " + propText
+		}
+		// Limit total search text length for performance
+		if len(searchText) > 500 {
+			searchText = truncateString(searchText, 500)
+		}
+		fuzzySim = normalizedSimilarity(searchText, queryLower)
 	}
-	fuzzySim := normalizedSimilarity(searchText, queryLower)
 
 	score += nameSim * 2
 	score += descSim * 0.8
@@ -214,6 +240,20 @@ func scoreTool(
 	score += fuzzySim * 0.5
 
 	return score, matches.List()
+}
+
+// truncateString safely truncates a string to maxLen bytes without breaking UTF-8 characters
+func truncateString(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	// Find the last valid UTF-8 character boundary at or before maxLen
+	for i := maxLen; i > 0; i-- {
+		if (s[i] & 0xC0) != 0x80 { // Not a continuation byte
+			return s[:i]
+		}
+	}
+	return s[:maxLen] // Fallback (shouldn't happen with valid UTF-8)
 }
 
 func getMaxResults(options []SearchOptions) int {

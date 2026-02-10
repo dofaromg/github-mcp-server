@@ -122,6 +122,8 @@ func ProcessResponseAsRingBufferToEnd(httpResp *http.Response, maxJobLogLines in
 		startIndex = writeIndex
 	}
 
+	// Pre-allocate result slice with known capacity to avoid reallocations
+	result = make([]string, 0, linesInBuffer)
 	for i := 0; i < linesInBuffer; i++ {
 		idx := (startIndex + i) % maxJobLogLines
 		if validLines[idx] {
