@@ -1931,9 +1931,7 @@ func addProjectItem(ctx context.Context, gqlClient *githubv4.Client, owner, owne
 	toolResult, err := utils.NewToolResultJSON(result)
 
 	if err != nil {
-
 		return nil, nil, err
-
 	}
 
 	return toolResult, nil, nil

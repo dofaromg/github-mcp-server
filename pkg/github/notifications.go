@@ -486,9 +486,7 @@ func ManageNotificationSubscription(t translations.TranslationHelperFunc) invent
 			toolResult, err := utils.NewToolResultJSON(result)
 
 			if err != nil {
-
 				return nil, nil, err
-
 			}
 
 			return toolResult, nil, nil
@@ -593,9 +591,7 @@ func ManageRepositoryNotificationSubscription(t translations.TranslationHelperFu
 			toolResult, err := utils.NewToolResultJSON(result)
 
 			if err != nil {
-
 				return nil, nil, err
-
 			}
 
 			return toolResult, nil, nil

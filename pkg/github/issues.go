@@ -1935,9 +1935,7 @@ func AssignCopilotToIssue(t translations.TranslationHelperFunc) inventory.Server
 			toolResult, err := utils.NewToolResultJSON(result)
 
 			if err != nil {
-
 				return nil, result, err
-
 			}
 
 			return toolResult, result, nil

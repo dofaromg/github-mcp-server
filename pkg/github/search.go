@@ -253,9 +253,7 @@ func SearchCode(t translations.TranslationHelperFunc) inventory.ServerTool {
 			toolResult, err := utils.NewToolResultJSON(result)
 
 			if err != nil {
-
 				return nil, nil, err
-
 			}
 
 			return toolResult, nil, nil
@@ -345,9 +343,7 @@ func userOrOrgHandler(ctx context.Context, accountType string, deps ToolDependen
 	toolResult, err := utils.NewToolResultJSON(minimalResp)
 
 	if err != nil {
-
 		return nil, nil, err
-
 	}
 
 	return toolResult, nil, nil

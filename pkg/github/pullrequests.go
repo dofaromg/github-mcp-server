@@ -1202,9 +1202,7 @@ func MergePullRequest(t translations.TranslationHelperFunc) inventory.ServerTool
 			toolResult, err := utils.NewToolResultJSON(result)
 
 			if err != nil {
-
 				return nil, nil, err
-
 			}
 
 			return toolResult, nil, nil
@@ -1358,9 +1356,7 @@ func UpdatePullRequestBranch(t translations.TranslationHelperFunc) inventory.Ser
 			toolResult, err := utils.NewToolResultJSON(result)
 
 			if err != nil {
-
 				return nil, nil, err
-
 			}
 
 			return toolResult, nil, nil
