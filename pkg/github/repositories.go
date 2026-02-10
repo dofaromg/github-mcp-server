@@ -108,13 +108,9 @@ func GetCommit(t translations.TranslationHelperFunc) inventory.ServerTool {
 			minimalCommit := convertToMinimalCommit(commit, includeDiff)
 
 			result, err := utils.NewToolResultJSON(minimalCommit)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -219,13 +215,9 @@ func ListCommits(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(minimalCommits)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -309,13 +301,9 @@ func ListBranches(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(minimalBranches)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -501,7 +489,6 @@ If the SHA is not provided, the tool will attempt to acquire it by fetching the 
 			if err != nil {
 				return nil, nil, err
 			}
-
 			// Warn if file was updated without SHA validation (blind update)
 			if sha == "" && previousSHA != "" {
 				// Reuse the already-marshaled result for the warning message
@@ -623,13 +610,9 @@ func CreateRepository(t translations.TranslationHelperFunc) inventory.ServerTool
 			}
 
 			result, err := utils.NewToolResultJSON(minimalResponse)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -816,13 +799,9 @@ func GetFileContents(t translations.TranslationHelperFunc) inventory.ServerTool 
 			} else if dirContent != nil {
 				// file content or file SHA is nil which means it's a directory
 				result, err := utils.NewToolResultJSON(dirContent)
-
 				if err != nil {
-
 					return nil, nil, err
-
 				}
-
 				return result, nil, nil
 			}
 
@@ -916,13 +895,9 @@ func ForkRepository(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(minimalResponse)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1109,13 +1084,9 @@ func DeleteFile(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(response)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1225,13 +1196,9 @@ func CreateBranch(t translations.TranslationHelperFunc) inventory.ServerTool {
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(createdRef)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1462,13 +1429,9 @@ func PushFiles(t translations.TranslationHelperFunc) inventory.ServerTool {
 			defer func() { _ = resp.Body.Close() }()
 
 			result, err := utils.NewToolResultJSON(updatedRef)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1544,13 +1507,9 @@ func ListTags(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(tags)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1645,13 +1604,9 @@ func GetTag(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(tagObj)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1723,13 +1678,9 @@ func ListReleases(t translations.TranslationHelperFunc) inventory.ServerTool {
 			}
 
 			result, err := utils.NewToolResultJSON(releases)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1792,13 +1743,9 @@ func GetLatestRelease(t translations.TranslationHelperFunc) inventory.ServerTool
 			}
 
 			result, err := utils.NewToolResultJSON(release)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -1872,13 +1819,9 @@ func GetReleaseByTag(t translations.TranslationHelperFunc) inventory.ServerTool 
 			}
 
 			result, err := utils.NewToolResultJSON(release)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -2007,13 +1950,9 @@ func ListStarredRepositories(t translations.TranslationHelperFunc) inventory.Ser
 			}
 
 			result, err := utils.NewToolResultJSON(minimalRepos)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)

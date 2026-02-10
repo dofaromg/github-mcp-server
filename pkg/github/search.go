@@ -150,13 +150,9 @@ func SearchRepositories(t translations.TranslationHelperFunc) inventory.ServerTo
 				}
 
 				result, err := utils.NewToolResultJSON(minimalResult)
-
 				if err != nil {
-
 					return nil, nil, err
-
 				}
-
 				return result, nil, nil
 			}
 
