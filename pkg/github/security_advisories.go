@@ -199,13 +199,9 @@ func ListGlobalSecurityAdvisories(t translations.TranslationHelperFunc) inventor
 			}
 
 			result, err := utils.NewToolResultJSON(advisories)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -302,13 +298,9 @@ func ListRepositorySecurityAdvisories(t translations.TranslationHelperFunc) inve
 			}
 
 			result, err := utils.NewToolResultJSON(advisories)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -362,13 +354,9 @@ func GetGlobalSecurityAdvisory(t translations.TranslationHelperFunc) inventory.S
 			}
 
 			result, err := utils.NewToolResultJSON(advisory)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
@@ -460,13 +448,9 @@ func ListOrgRepositorySecurityAdvisories(t translations.TranslationHelperFunc) i
 			}
 
 			result, err := utils.NewToolResultJSON(advisories)
-
 			if err != nil {
-
 				return nil, nil, err
-
 			}
-
 			return result, nil, nil
 		},
 	)
