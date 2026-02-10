@@ -335,7 +335,7 @@ func GenerateToolsetsHelp() string {
 	var currentLineBuf strings.Builder
 	lineStart := true
 
-	for i, toolset := range allToolsets {
+	for _, toolset := range allToolsets {
 		id := string(toolset.ID)
 		currentLen := currentLineBuf.Len()
 
@@ -362,14 +362,14 @@ func GenerateToolsetsHelp() string {
 			currentLineBuf.Reset()
 			currentLineBuf.WriteString(id)
 		}
+	}
 
-		// Handle last item
-		if i == len(allToolsets)-1 {
-			if availableBuf.Len() > 0 {
-				availableBuf.WriteString(",\n\t     ")
-			}
-			availableBuf.WriteString(currentLineBuf.String())
+	// Flush the last line after loop completes
+	if currentLineBuf.Len() > 0 {
+		if availableBuf.Len() > 0 {
+			availableBuf.WriteString(",\n\t     ")
 		}
+		availableBuf.WriteString(currentLineBuf.String())
 	}
 
 	// Build the complete help text using strings.Builder

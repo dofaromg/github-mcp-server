@@ -142,12 +142,6 @@ func scoreTool(
 	matchedTokens := make(map[string]struct{})
 
 	// Token-level matches for multi-word queries
-	// Build a map of property names for O(1) lookup instead of O(n) inner loop
-	propertySet := make(map[string]bool, len(propertyNames))
-	for _, prop := range propertyNames {
-		propertySet[prop] = true
-	}
-
 	for _, token := range queryTokens {
 		if strings.Contains(nameLower, token) {
 			score++
@@ -159,8 +153,7 @@ func scoreTool(
 			matches.Add("description:token")
 		}
 
-		// Check if any property contains this token using the pre-built set
-		for prop := range propertySet {
+		for _, prop := range propertyNames {
 			if strings.Contains(prop, token) {
 				// Only credit the first parameter match per token to avoid double-counting
 				score += 0.4
@@ -178,7 +171,7 @@ func scoreTool(
 	}
 
 	// Prefer names that cover query tokens directly, with fewer extra tokens
-	// Build a set of name tokens for O(1) lookup
+	// Build a set of name tokens for O(1) exact match lookup
 	nameTokenSet := make(map[string]bool, len(nameTokens))
 	for _, nt := range nameTokens {
 		nameTokenSet[nt] = true
@@ -191,8 +184,8 @@ func scoreTool(
 			nameTokenMatches++
 			continue
 		}
-		// Check for substring match (still need to iterate but only when no exact match)
-		for nt := range nameTokenSet {
+		// Check for substring match using original slice for deterministic order
+		for _, nt := range nameTokens {
 			if strings.Contains(nt, qt) {
 				nameTokenMatches++
 				break
@@ -230,13 +223,13 @@ func scoreTool(
 			// Limit concatenated property names to avoid very expensive Levenshtein computations
 			propText := strings.Join(propertyNames, " ")
 			if len(propText) > 200 {
-				propText = propText[:200]
+				propText = truncateString(propText, 200)
 			}
 			searchText += " " + propText
 		}
 		// Limit total search text length for performance
 		if len(searchText) > 500 {
-			searchText = searchText[:500]
+			searchText = truncateString(searchText, 500)
 		}
 		fuzzySim = normalizedSimilarity(searchText, queryLower)
 	}
@@ -247,6 +240,20 @@ func scoreTool(
 	score += fuzzySim * 0.5
 
 	return score, matches.List()
+}
+
+// truncateString safely truncates a string to maxLen bytes without breaking UTF-8 characters
+func truncateString(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	// Find the last valid UTF-8 character boundary at or before maxLen
+	for i := maxLen; i > 0; i-- {
+		if (s[i] & 0xC0) != 0x80 { // Not a continuation byte
+			return s[:i]
+		}
+	}
+	return s[:maxLen] // Fallback (shouldn't happen with valid UTF-8)
 }
 
 func getMaxResults(options []SearchOptions) int {
